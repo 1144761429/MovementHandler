@@ -1,5 +1,4 @@
 ﻿using StackableElement;
-using System.Buffers.Text;
 
 namespace SpeedHandler
 {
@@ -24,6 +23,13 @@ namespace SpeedHandler
         /// </summary>
         public SpeedType Type { get; private set; }
 
+        /// <summary>
+        /// Constructor for a SpeedElment
+        /// </summary>
+        /// <param name="name">The Name of a SpeedElement</param>
+        /// <param name="value">The Value of a SpeedElement</param>
+        /// <param name="isExclusive">Determines if a StackableElement can only have Stack of 1 or 0.</param>
+        /// <param name="speedType">The type of a SpeedElement.</param>
         public SpeedElement(TSpeedElementId name, float value, bool isExclusive, SpeedType speedType) : base(name, value, isExclusive)
         {
             Type = speedType;

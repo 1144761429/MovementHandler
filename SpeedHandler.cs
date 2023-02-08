@@ -1,12 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using StackableElement;
 
 namespace SpeedHandler
 {
-    public class SpeedHandler<TSpeedElementId>
+    public class SpeedHandler<TSpeedElementId> where TSpeedElementId :notnull
     {
         private Dictionary<TSpeedElementId, SpeedElement<TSpeedElementId>> _dict;
 
@@ -48,6 +47,11 @@ namespace SpeedHandler
             return finalSpeed;
         }
 
+        public SpeedElement<TSpeedElementId> GetSpeedElement(TSpeedElementId speedElementId)
+        {
+            
+        }
+
         /// <summary>
         /// Add a SpeedElement to the SpeedHandler.
         /// </summary>
@@ -55,7 +59,8 @@ namespace SpeedHandler
         /// <param name="speedElement">The actual data of a SpeedElement.</param>
         public bool TryAddSpeedElement(TSpeedElementId speedElementId, SpeedElement<TSpeedElementId> speedElement)
         {
-            return _dict.TryAdd(speedElementId, speedElement);
+            //return _dict.TryAdd(speedElementId, speedElement);
+            return true;
         }
 
         /// <summary>
@@ -90,7 +95,6 @@ namespace SpeedHandler
 
             _dict[speedElementId].SetStack(stack);
         }
-
     }
 
 }

@@ -49,9 +49,9 @@ namespace StackableElement
         /// <summary>
         /// Constructor for a StackableElement object with a inital stack of 1 and customized stackability.
         /// </summary>
-        /// <param name="name">The name of the StackableElement</param>
-        /// <param name="value">The value of the StackableElement</param>
-        /// <param name="isExclusive">If the StackableElement can have multiple stacks</param>
+        /// <param name="name">The name of a StackableElement.</param>
+        /// <param name="value">The value of a StackableElement.</param>
+        /// <param name="isExclusive">Determines if a StackableElement can only have Stack of 1 or 0.</param>
         public StackableElement(TElementId name, float value, bool isExclusive)
         {
             _value = value;
