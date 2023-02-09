@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using StackableElement;
 
 namespace SpeedHandler
 {
-    public class SpeedHandler<TSpeedElementId> where TSpeedElementId :notnull
+    public class SpeedHandler<TSpeedElementId> where TSpeedElementId : notnull
     {
         private Dictionary<TSpeedElementId, SpeedElement<TSpeedElementId>> _dict;
 
@@ -47,9 +45,20 @@ namespace SpeedHandler
             return finalSpeed;
         }
 
+        /// <summary>
+        /// Get a SpeedElement in the SpeedHandler.
+        /// </summary>
+        /// <param name="speedElementId">The SpeedElement that is going to get.</param>
+        /// <returns>The target SpeedElement.</returns>
+        /// <exception cref="ArgumentException">SpeedElement with speedElementId does not exist in the SpeedHandler.</exception>
         public SpeedElement<TSpeedElementId> GetSpeedElement(TSpeedElementId speedElementId)
         {
-            
+            if (!_dict.ContainsKey(speedElementId))
+            {
+                throw new ArgumentException($"SpeedElement {speedElementId} does not exist in the SpeedHandler.");
+            }
+
+            return _dict[speedElementId];
         }
 
         /// <summary>
@@ -59,8 +68,7 @@ namespace SpeedHandler
         /// <param name="speedElement">The actual data of a SpeedElement.</param>
         public bool TryAddSpeedElement(TSpeedElementId speedElementId, SpeedElement<TSpeedElementId> speedElement)
         {
-            //return _dict.TryAdd(speedElementId, speedElement);
-            return true;
+            return _dict.TryAdd(speedElementId, speedElement);
         }
 
         /// <summary>

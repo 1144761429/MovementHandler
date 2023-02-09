@@ -24,7 +24,7 @@ namespace SpeedHandler
         public SpeedType Type { get; private set; }
 
         /// <summary>
-        /// Constructor for a SpeedElment
+        /// Constructor for a SpeedElment with a initial Stack of 1
         /// </summary>
         /// <param name="name">The Name of a SpeedElement</param>
         /// <param name="value">The Value of a SpeedElement</param>

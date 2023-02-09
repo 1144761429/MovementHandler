@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace StackableElement
 {
@@ -47,7 +46,7 @@ namespace StackableElement
 
 
         /// <summary>
-        /// Constructor for a StackableElement object with a inital stack of 1 and customized stackability.
+        /// Constructor for StackableElement object with a inital stack of 0.
         /// </summary>
         /// <param name="name">The name of a StackableElement.</param>
         /// <param name="value">The value of a StackableElement.</param>
@@ -56,10 +55,10 @@ namespace StackableElement
         {
             _value = value;
             _name = name;
-            _stack = 1;
+            _stack = 0;
             _isExclusive = isExclusive;
             _minStack = _defaultMinStack;
-            _maxStack = _isExclusive ? _defaultMaxStack : 1;
+            _maxStack = _isExclusive ? 1 : _defaultMaxStack;
         }
 
 
@@ -116,9 +115,9 @@ namespace StackableElement
                 throw new ArgumentException($"Removing a negative value of stack is not allowed. Stackable Element: {_name}, OperationStack: {stack}.");
             }
 
-            if (_stack + stack <= _maxStack)
+            if (_stack - stack >= _minStack)
             {
-                _stack += stack;
+                _stack -= stack;
                 return true;
             }
             else
