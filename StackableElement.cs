@@ -5,13 +5,14 @@ namespace StackableElement
     /// <summary>
     /// A type of data that has a value and a stack.
     /// </summary>
-    /// <typeparam name="TElementId">A class used for differentiating each StackableElement.</typeparam>
+    /// <typeparam name="TElementId">The name of a StackableElement.</typeparam>
     public class StackableElement<TElementId>
     {
         private TElementId _name;
         private float _value;
         private int _stack;
         private bool _isExclusive;
+        private bool _isFrozen;
         private int _minStack;
         private int _maxStack;
         private int _defaultMinStack;
@@ -27,6 +28,10 @@ namespace StackableElement
         /// If a StackableElement can have multiple(more than 1) stacks.
         /// </summary>
         public bool IsExclusive { get { return _isExclusive; } protected set { _isExclusive = value; } }
+        /// <summary>
+        /// If a StackableElement can not change its Stack
+        /// </summary>
+        public bool IsFrozen { get { return _isFrozen; } protected set { _isFrozen = value; } }
         /// <summary>
         /// The minimum stack a StackableElement can have. This is set to 0 if it is not specified.
         /// </summary>
@@ -71,6 +76,11 @@ namespace StackableElement
         /// False if the property Stack is grerater than the MaxStack after calling this method, and no action will be taken</returns>
         public bool TryAddStack(int stack)
         {
+            if (_isFrozen)
+            {
+                return false;
+            }
+
             if (stack < 0)
             {
                 throw new ArgumentException($"Adding a negative value of stack is not allowed. Stackable Element: {_name}, OperationStack: {stack}.");
@@ -94,6 +104,11 @@ namespace StackableElement
         /// <param name="stack">The number of Stack that will be added. CANNOT be negative.</param>
         public void AddStackTrim(int stack)
         {
+            if (_isFrozen)
+            {
+                return;
+            }
+
             if (stack < 0)
             {
                 throw new ArgumentException($"Adding a negative value of stack is not allowed. Stackable Element: {_name}, OperationStack: {stack}.");
@@ -110,6 +125,11 @@ namespace StackableElement
         /// False if the property Stack is negative after calling this method, and no action will be taken.</returns>
         public bool TryRemoveStack(int stack)
         {
+            if (_isFrozen)
+            {
+                return false;
+            }
+
             if (stack < 0)
             {
                 throw new ArgumentException($"Removing a negative value of stack is not allowed. Stackable Element: {_name}, OperationStack: {stack}.");
@@ -133,6 +153,11 @@ namespace StackableElement
         /// <param name="stack">The number of Stack that will be removed. CANNOT be negative.</param>
         public void RemoveStackTrim(int stack)
         {
+            if (_isFrozen)
+            {
+                return;
+            }
+
             if (stack < 0)
             {
                 throw new ArgumentException($"Removing a negative value of stack is not allowed. Stackable Element: {_name}, OperationStack: {stack}.");
@@ -148,6 +173,11 @@ namespace StackableElement
         /// <param name="stack">The number of Stack that will be set to.</param>
         public void SetStack(int stack)
         {
+            if (_isFrozen)
+            {
+                return;
+            }
+
             if (stack > _maxStack || stack < _minStack)
             {
                 throw new StackOutOfBoundException(_name.ToString(), _stack, stack, _minStack, _maxStack);
@@ -163,16 +193,30 @@ namespace StackableElement
         /// </summary>
         public void ClearStack()
         {
+            if (_isFrozen)
+            {
+                return;
+            }
+
             _stack = 0;
         }
 
         /// <summary>
-        /// Change the property IsExclusive of a StackableElement.
+        /// Change the IsExclusive of a StackableElement.
         /// </summary>
-        /// <param name="isExclusive">A bool value that determines if a Stackable can have multiple stacks.</param>
+        /// <param name="isExclusive">True if a Stackable can have multiple stacks. False if it can only have 0 or 1 stack.</param>
         public void SetIsExclusive(bool isExclusive)
         {
             _isExclusive = isExclusive;
+        }
+
+        /// <summary>
+        /// Change the IsFrozen of a StackableElement.
+        /// </summary>
+        /// <param name="isFrozen">True if the Stack of a Stackable be modified. False if it can not be modified.</param>
+        public void SetIsFrozen(bool isFrozen)
+        {
+            _isFrozen = isFrozen;
         }
 
         /// <summary>
@@ -215,14 +259,7 @@ namespace StackableElement
             _minStack = minStack;
         }
 
-        /// <summary>
-        /// Calculate the overall value of a StackableElement, which is product of property Stack and Value.
-        /// </summary>
-        /// <returns>The overall value: Value times Stack.</returns>
-        public float GetOverallValue()
-        {
-            return _value * _stack;
-        }
+
 
         /// <summary>
         /// Return the string repesentation of a StackableElement.
@@ -230,7 +267,8 @@ namespace StackableElement
         /// <returns>The String representation of a StackableElement.</returns>
         public override string ToString()
         {
-            return $"{_name} Stack: {_stack}, Value: {_value}, IsExclusive: {_isExclusive}, MinStack: {_minStack}, MaxStack: {_maxStack}.";
+            return $"StackableElement: {_name},  Stack: {_stack},  Value: {_value},  IsExclusive: {_isExclusive},  IsFrozen: {_isFrozen},"
+                + $"MinStack: {_minStack},  MaxStack: {_maxStack}.";
         }
 
         /// <summary>

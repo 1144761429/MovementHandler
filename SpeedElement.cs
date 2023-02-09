@@ -36,6 +36,15 @@ namespace SpeedHandler
             DefaultMinStack = 0;
             DefaultMaxStack = 99;
         }
+
+        /// <summary>
+        /// Calculate the overall value of a SpeedElement, which is Value multiplied by Stack.
+        /// </summary>
+        /// <returns>The overall value: Value * Stack.</returns>
+        public float GetOverallValue()
+        {
+            return Value * Stack;
+        }
     }
 }
 
