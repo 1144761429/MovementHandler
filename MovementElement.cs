@@ -1,18 +1,31 @@
 ﻿using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public struct MovementElement
 {
     public float Speed;
     public Vector3 Direction;
+    /// <summary>
+    /// If true, the MovementElement will be included in the calculation of velocity in a SpeedHandler.
+    /// If false, the MovementElement will not be included.
+    /// </summary>
+    public bool IsActive;
 
+    /// <summary>
+    /// Constructor for a MovementElement with a initial IsActive set to true.
+    /// </summary>
+    /// <param name="speed"></param>
+    /// <param name="direction"></param>
     public MovementElement(float speed, Vector3 direction)
     {
         Speed = speed;
         Direction = direction;
+        IsActive = true;
     }
 
+    /// <summary>
+    /// The velocity of the MovementElement, which is SPeed * Direction;
+    /// </summary>
     public Vector3 Velocity
     {
         get { return Speed * Direction; }
