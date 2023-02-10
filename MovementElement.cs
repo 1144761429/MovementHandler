@@ -1,9 +1,8 @@
-﻿using SpeedHandler;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 //In the first constuctor, ESpeedType will be replaced later by a class of Enum that lists all speed ID.
+//In the first constuctor, EDirectionType will be replaced later by a class of Enum that lists all direction ID.
 
 public class MovementElement
 {
