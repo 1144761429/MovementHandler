@@ -31,7 +31,7 @@ public class DirectionHandler<TDirectionElementId>
     /// Calculate the Speed of a DirectionHandler by sum up the overall value of each DirectionElement.
     /// </summary>
     /// <returns>The speed of  a DirectionHandler.</returns>
-    public Vector3 CalculateSpeed()
+    public Vector3 CalculateDirection()
     {
         Vector3 finalDirection = Vector3.zero;
 

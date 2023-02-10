@@ -7,13 +7,9 @@ using UnityEngine;
 public class MovementElement
 {
     private SpeedHandler<ESpeedType> _speedHandler;
-    private Vector3 _direction;
+    private DirectionHandler<EDirectionType> _directionHandler;
     private bool _isActive;
 
-    /// <summary>
-    /// The direction of a MovementElement.
-    /// </summary>
-    public Vector3 Direction { get { return _direction; } }
     /// <summary>
     /// If true, the MovementElement will be included in the calculation of velocity in a SpeedHandler.
     /// If false, the MovementElement will not be included.
@@ -24,7 +20,7 @@ public class MovementElement
     /// </summary>
     public Vector3 Velocity
     {
-        get { return _speedHandler.CalculateSpeed() * Direction; }
+        get { return _speedHandler.CalculateSpeed() * _directionHandler.CalculateDirection(); }
     }
 
     /// <summary>
@@ -35,10 +31,11 @@ public class MovementElement
     /// <param name="direction">The direction of a MovementElement.</param>
     public MovementElement(float speed, Vector3 direction)
     {
-        _direction = direction;
         _isActive = true;
         _speedHandler = new SpeedHandler<ESpeedType>();
         _speedHandler.TryAddSpeedElement(ESpeedType.Basic, new SpeedElement(speed, 1, true, ESpeedType.Basic));
+        _directionHandler = new DirectionHandler<EDirectionType>();
+        _directionHandler.TryAddDirectionElement(EDirectionType.Basic, new DirectionElement(direction, 1, true, EDirectionType.Basic));
     }
 
     /// <summary>
@@ -50,10 +47,11 @@ public class MovementElement
     /// <param name="isActive">If the MovementElement is active.</param>
     public MovementElement(float speed, Vector3 direction, bool isActive)
     {
-        _direction = direction;
         _isActive = isActive;
         _speedHandler = new SpeedHandler<ESpeedType>();
         _speedHandler.TryAddSpeedElement(ESpeedType.Basic, new SpeedElement(speed, 1, true, ESpeedType.Basic));
+        _directionHandler = new DirectionHandler<EDirectionType>();
+        _directionHandler.TryAddDirectionElement(EDirectionType.Basic, new DirectionElement(direction, 1, true, EDirectionType.Basic));
     }
 
     /// <summary>
@@ -89,29 +87,31 @@ public class MovementElement
 
     public static bool operator ==(MovementElement element1, MovementElement element2)
     {
-        return element1._speedHandler.CalculateSpeed() == element2._speedHandler.CalculateSpeed() && element1.Direction == element2.Direction;
+        return element1._speedHandler.CalculateSpeed() == element2._speedHandler.CalculateSpeed() &&
+            element1._directionHandler.CalculateDirection() == element2._directionHandler.CalculateDirection();
     }
 
     public static bool operator !=(MovementElement element1, MovementElement element2)
     {
-        return element1._speedHandler.CalculateSpeed() != element2._speedHandler.CalculateSpeed() || element1.Direction != element2.Direction;
+        return element1._speedHandler.CalculateSpeed() != element2._speedHandler.CalculateSpeed() ||
+            element1._directionHandler.CalculateDirection() != element2._directionHandler.CalculateDirection();
     }
 
     public override string ToString()
     {
-        return $"Speed: {_speedHandler.CalculateSpeed()}, Direction: {Direction}, IsActive: {IsActive}.";
+        return $"Speed: {_speedHandler.CalculateSpeed()}, Direction: {_directionHandler.CalculateDirection()}, IsActive: {IsActive}.";
     }
 
     public override bool Equals(object obj)
     {
         return obj is MovementElement element &&
                _speedHandler.CalculateSpeed() == element._speedHandler.CalculateSpeed() &&
-               Direction == element.Direction;
+               _directionHandler.CalculateDirection() == element._directionHandler.CalculateDirection();
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_speedHandler.CalculateSpeed(), Direction);
+        return HashCode.Combine(_speedHandler.CalculateSpeed(), _directionHandler.CalculateDirection());
     }
 }
 
