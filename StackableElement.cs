@@ -1,14 +1,12 @@
 using System;
 
-namespace StackableElement
+namespace MyModule
 {
     /// <summary>
     /// A type of data that has a value and a stack.
     /// </summary>
-    /// <typeparam name="TElementId">The name of a StackableElement.</typeparam>
-    public class StackableElement<TElementId>
+    public class StackableElement
     {
-        private TElementId _name;
         private float _value;
         private int _stack;
         private bool _isExclusive;
@@ -18,10 +16,6 @@ namespace StackableElement
         private int _defaultMinStack;
         private int _defaultMaxStack;
 
-        /// <summary>
-        /// The name of a StackableElement with a generic type
-        /// </summary>
-        public TElementId Name { get { return _name; } protected set { _name = value; } }
         public float Value { get { return _value; } protected set { _value = value; } }
         public int Stack { get { return _stack; } protected set { _stack = value; } }
         /// <summary>
@@ -53,17 +47,41 @@ namespace StackableElement
         /// <summary>
         /// Constructor for StackableElement object with a inital stack of 0.
         /// </summary>
-        /// <param name="name">The name of a StackableElement.</param>
         /// <param name="value">The value of a StackableElement.</param>
         /// <param name="isExclusive">Determines if a StackableElement can only have Stack of 1 or 0.</param>
-        public StackableElement(TElementId name, float value, bool isExclusive)
+        public StackableElement(float value, bool isExclusive)
         {
             _value = value;
-            _name = name;
             _stack = 0;
             _isExclusive = isExclusive;
             _minStack = _defaultMinStack;
             _maxStack = _isExclusive ? 1 : _defaultMaxStack;
+        }
+
+        /// <summary>
+        /// Constructor for StackableElement object with a inital stack of 0.
+        /// </summary>
+        /// <param name="value">The value of a StackableElement.</param>
+        /// <param name="stack">The initial Stack number.</param>
+        /// <param name="isExclusive">Determines if a StackableElement can only have Stack of 1 or 0.</param>
+        /// <exception cref="ArgumentException">Initial Stack number is not in the range.</exception>
+        public StackableElement(float value, int stack, bool isExclusive)
+        {
+            if (isExclusive && (stack < 0 || stack > 1))
+            {
+                throw new ArgumentException($"IsExclusive is set to true, but initial stack is not within the range 0 to 1.");
+            }
+
+            _value = value;
+            _stack = stack;
+            _isExclusive = isExclusive;
+            _minStack = _isExclusive ? 0 : _defaultMinStack;
+            _maxStack = _isExclusive ? 1 : _defaultMaxStack;
+
+            if (stack < _minStack || stack > _maxStack)
+            {
+                throw new ArgumentException($"Initial Stack {stack} is not within the range of the StackableElmenet. Range: {_minStack} to {_maxStack}(both inclusive).");
+            }
         }
 
 
@@ -83,7 +101,7 @@ namespace StackableElement
 
             if (stack < 0)
             {
-                throw new ArgumentException($"Adding a negative value of stack is not allowed. Stackable Element: {_name}, OperationStack: {stack}.");
+                throw new ArgumentException($"Adding a negative value of stack is not allowed. OperationStack: {stack}.");
             }
 
             if (_stack + stack <= _maxStack)
@@ -111,7 +129,7 @@ namespace StackableElement
 
             if (stack < 0)
             {
-                throw new ArgumentException($"Adding a negative value of stack is not allowed. Stackable Element: {_name}, OperationStack: {stack}.");
+                throw new ArgumentException($"Adding a negative value of stack is not allowed. OperationStack: {stack}.");
             }
 
             _stack = (_stack + stack > _maxStack) ? _maxStack : (_stack + stack);
@@ -132,7 +150,7 @@ namespace StackableElement
 
             if (stack < 0)
             {
-                throw new ArgumentException($"Removing a negative value of stack is not allowed. Stackable Element: {_name}, OperationStack: {stack}.");
+                throw new ArgumentException($"Removing a negative value of stack is not allowed. OperationStack: {stack}.");
             }
 
             if (_stack - stack >= _minStack)
@@ -160,7 +178,7 @@ namespace StackableElement
 
             if (stack < 0)
             {
-                throw new ArgumentException($"Removing a negative value of stack is not allowed. Stackable Element: {_name}, OperationStack: {stack}.");
+                throw new ArgumentException($"Removing a negative value of stack is not allowed. OperationStack: {stack}.");
             }
 
             _stack = (_stack - stack < _minStack) ? _minStack : (_stack - stack);
@@ -180,7 +198,7 @@ namespace StackableElement
 
             if (stack > _maxStack || stack < _minStack)
             {
-                throw new StackOutOfBoundException(_name.ToString(), _stack, stack, _minStack, _maxStack);
+                throw new StackOutOfBoundException(_stack, stack, _minStack, _maxStack);
             }
             else
             {
@@ -227,7 +245,7 @@ namespace StackableElement
         {
             if (maxStack < _minStack)
             {
-                throw new ArgumentException($"Attempting to change the MaxStack of {_name} from {_maxStack} to {maxStack} which is smaller than {_minStack}. "
+                throw new ArgumentException($"Attempting to change the MaxStack from {_maxStack} to {maxStack} which is smaller than {_minStack}. "
                     + "MaxStack has to be larger than MinStack.");
             }
 
@@ -247,7 +265,7 @@ namespace StackableElement
         {
             if (minStack > MaxStack)
             {
-                throw new ArgumentException($"Attempting to change the MinStack of {_name} from {_minStack} to {minStack} which is larger than {_maxStack}. "
+                throw new ArgumentException($"Attempting to change the MinStack from {_minStack} to {minStack} which is larger than {_maxStack}. "
                     + "MinStack has to be smaller than MaxStack.");
             }
 
@@ -267,7 +285,7 @@ namespace StackableElement
         /// <returns>The String representation of a StackableElement.</returns>
         public override string ToString()
         {
-            return $"StackableElement: {_name},  Stack: {_stack},  Value: {_value},  IsExclusive: {_isExclusive},  IsFrozen: {_isFrozen},"
+            return $"Stack: {_stack},  Value: {_value},  IsExclusive: {_isExclusive},  IsFrozen: {_isFrozen},"
                 + $"MinStack: {_minStack},  MaxStack: {_maxStack}.";
         }
 
@@ -275,26 +293,24 @@ namespace StackableElement
         /// Compare if two StackableElements are equal.
         /// </summary>
         /// <param name="obj">The other comparing object</param>
-        /// <returns>True if two StackableElements have the same Name, Value, and Stack. False if they do not have the same poperties.</returns>
+        /// <returns>True if two StackableElements have the same Value and Stack. False if they do not have the same poperties.</returns>
         public override bool Equals(object obj)
         {
-            if (obj is not StackableElement<TElementId>)
+            if (obj is not StackableElement)
             {
                 return false;
             }
 
-            return _name.Equals(((StackableElement<TElementId>)obj)._name)
-                && _value == ((StackableElement<TElementId>)obj)._value
-                && _stack == ((StackableElement<TElementId>)obj)._stack;
+            return _value == ((StackableElement)obj)._value && _stack == ((StackableElement)obj)._stack;
         }
 
         /// <summary>
-        /// Return the HashCode value of a StackableElement. Name^Value^Stack.
+        /// Return the HashCode value of a StackableElement.
         /// </summary>
         /// <returns>Return the HashCode value of a StackableElement.</returns>
         public override int GetHashCode()
         {
-            return _name.GetHashCode() ^ _value.GetHashCode() ^ _stack.GetHashCode();
+            return HashCode.Combine(_value, _stack);
         }
         #endregion
 

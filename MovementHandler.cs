@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using SpeedHandler;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class MovementHandler<TMovementElementId> where TMovementElementId : notnull
+public class MovementHandler<TMovementElementId>
 {
     /// <summary>
     /// Dictionary that stores the MovementElement as the Value with a ID of it as the Key.
@@ -49,7 +51,7 @@ public class MovementHandler<TMovementElementId> where TMovementElementId : notn
 
         foreach (MovementElement movementElement in _dict.Values)
         {
-            if(movementElement.IsActive)
+            if (movementElement.IsActive)
                 finalVelocity += movementElement.Velocity;
         }
 
@@ -57,9 +59,9 @@ public class MovementHandler<TMovementElementId> where TMovementElementId : notn
     }
 
     /// <summary>
-    /// Get a MovementElment from 
+    /// Get a MovementElment from the MovementHandler.
     /// </summary>
-    /// <param name="movementElementId"></param>
+    /// <param name="movementElementId">The target MovementElement.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
     public MovementElement GetMovementElement(TMovementElementId movementElementId)
@@ -73,13 +75,23 @@ public class MovementHandler<TMovementElementId> where TMovementElementId : notn
     }
 
     /// <summary>
+    /// Get a SpeedElement, in SpeedHandler, from a MovementElement from the MovementHandler.
+    /// </summary>
+    /// <param name="movementElementId">The target MovementElement.</param>
+    /// <param name="speedType">The ID of the target SpeedElement.</param>
+    /// <returns>The target SpeedElement.</returns>
+    public SpeedElement GetSpeedElementInMovementElement(TMovementElementId movementElementId, ESpeedType speedType)
+    {
+        return GetMovementElement(movementElementId).GetSpeedElement(speedType);
+    }
+
+    /// <summary>
     /// Remove all the MovementElement from the MovementHandler.
     /// </summary>
     public void Clear()
     {
         _dict.Clear();
     }
-
 }
 
 

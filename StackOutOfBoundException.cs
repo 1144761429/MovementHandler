@@ -1,25 +1,23 @@
 using System;
 
-namespace StackableElement
+namespace MyModule
 {
     class StackOutOfBoundException : Exception
     {
         public StackOutOfBoundException(
-            string stackableElementName,
             int currentStack,
             int operationStack,
             int minStack,
-            int maxStack) : base(Form(stackableElementName, currentStack, operationStack, minStack, maxStack)) { }
+            int maxStack) : base(Form(currentStack, operationStack, minStack, maxStack)) { }
 
 
         public static string Form(
-            string stackableElementName,
             int currentStack,
             int operationStack,
             int minStack,
             int maxStack)
         {
-            return $"StackableElement {stackableElementName}, currently has {currentStack} stacks, would have {currentStack + operationStack} after operation."
+            return $"StackableElement currently has {currentStack} stacks, would have {currentStack + operationStack} after operation."
                 + $"\n The range of Stack should be within {minStack} - {maxStack}.";
         }
     }
